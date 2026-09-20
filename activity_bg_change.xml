@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent" android:background="#0D0D0D">
+  <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+      android:orientation="vertical" android:padding="16dp">
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="Background Changer" android:textColor="#FFF" android:textSize="20sp" android:textStyle="bold" android:paddingBottom="16dp"/>
+    <Button android:id="@+id/btnPickImage" android:layout_width="match_parent" android:layout_height="50dp"
+        android:text="Photo Select Karo" android:backgroundTint="#1565C0" android:textColor="#FFF"/>
+    <ImageView android:id="@+id/imageResult" android:layout_width="match_parent" android:layout_height="250dp"
+        android:layout_marginTop="12dp" android:scaleType="fitCenter" android:visibility="gone" android:background="#1A1A1A"/>
+    <TextView android:id="@+id/txtStatus" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_marginTop="8dp" android:textColor="#AAAAAA" android:textSize="13sp" android:text="Photo select karo"/>
+    <ProgressBar android:id="@+id/progressBar" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_gravity="center" android:visibility="gone"/>
+    <LinearLayout android:id="@+id/bgOptions" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical" android:visibility="gone" android:layout_marginTop="12dp">
+      <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+          android:text="Background choose karo:" android:textColor="#FFF" android:textSize="15sp" android:paddingBottom="8dp"/>
+      <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+        <Button android:id="@+id/btnWhite"  android:layout_width="0dp" android:layout_height="44dp" android:layout_weight="1" android:text="White"  android:backgroundTint="#FFFFFF" android:textColor="#000" android:textSize="12sp"/>
+        <Button android:id="@+id/btnBlack"  android:layout_width="0dp" android:layout_height="44dp" android:layout_weight="1" android:text="Black"  android:backgroundTint="#212121" android:textColor="#FFF" android:textSize="12sp" android:layout_marginStart="6dp"/>
+        <Button android:id="@+id/btnBlue"   android:layout_width="0dp" android:layout_height="44dp" android:layout_weight="1" android:text="Blue"   android:backgroundTint="#1565C0" android:textColor="#FFF" android:textSize="12sp" android:layout_marginStart="6dp"/>
+      </LinearLayout>
+      <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="6dp">
+        <Button android:id="@+id/btnGreen"  android:layout_width="0dp" android:layout_height="44dp" android:layout_weight="1" android:text="Green"  android:backgroundTint="#2E7D32" android:textColor="#FFF" android:textSize="12sp"/>
+        <Button android:id="@+id/btnRed"    android:layout_width="0dp" android:layout_height="44dp" android:layout_weight="1" android:text="Red"    android:backgroundTint="#B71C1C" android:textColor="#FFF" android:textSize="12sp" android:layout_marginStart="6dp"/>
+        <Button android:id="@+id/btnYellow" android:layout_width="0dp" android:layout_height="44dp" android:layout_weight="1" android:text="Yellow" android:backgroundTint="#F57F17" android:textColor="#000" android:textSize="12sp" android:layout_marginStart="6dp"/>
+      </LinearLayout>
+      <Button android:id="@+id/btnGallery" android:layout_width="match_parent" android:layout_height="44dp"
+          android:layout_marginTop="6dp" android:text="Gallery se Background"
+          android:backgroundTint="#37474F" android:textColor="#FFF" android:textSize="13sp"/>
+      <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+          android:orientation="horizontal" android:layout_marginTop="6dp" android:gravity="center_vertical">
+        <EditText android:id="@+id/editBgPrompt" android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_weight="1" android:textColor="#FFF" android:hint="AI background describe karo..."
+            android:textColorHint="#666" android:backgroundTint="#333" android:padding="10dp" android:inputType="text"/>
+        <Button android:id="@+id/btnAiBg" android:layout_width="wrap_content" android:layout_height="44dp"
+            android:layout_marginStart="8dp" android:text="AI" android:backgroundTint="#6A1B9A" android:textColor="#FFF"/>
+      </LinearLayout>
+    </LinearLayout>
+    <Button android:id="@+id/btnSave" android:layout_width="match_parent" android:layout_height="50dp"
+        android:layout_marginTop="12dp" android:text="Gallery mein Save Karo"
+        android:backgroundTint="#2E7D32" android:textColor="#FFF" android:visibility="gone"/>
+  </LinearLayout>
+</ScrollView>

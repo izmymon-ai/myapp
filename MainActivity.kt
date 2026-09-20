@@ -1,9 +1,9 @@
-package com.ahmed.agentapp
+package com.ahmed.aiagent
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.ahmed.agentapp.databinding.ActivityMainBinding
+import com.ahmed.aiagent.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
@@ -14,21 +14,11 @@ class MainActivity : AppCompatActivity() {
         b = ActivityMainBinding.inflate(layoutInflater)
         setContentView(b.root)
 
-        b.cardImageGen.setOnClickListener   { startActivity(Intent(this, ImageGenActivity::class.java)) }
-        b.cardBgChange.setOnClickListener   { startActivity(Intent(this, BgChangeActivity::class.java)) }
-        b.cardFilter.setOnClickListener     { startActivity(Intent(this, FilterActivity::class.java)) }
-        b.cardVideoMaker.setOnClickListener { startActivity(Intent(this, VideoMakerActivity::class.java)) }
-        b.cardSearch.setOnClickListener     { startActivity(Intent(this, SearchActivity::class.java)) }
-
-        // API token setup
-        b.btnApiToken.setOnClickListener {
-            val token = b.editToken.text.toString().trim()
-            if (token.startsWith("hf_") && token.length > 10) {
-                HuggingFaceApi.API_TOKEN = token
-                b.txtTokenStatus.text = "✅ Token set! Sab features ab kaam karenge."
-            } else {
-                b.txtTokenStatus.text = "❌ Token galat hai — hf_ se shuru hona chahiye"
-            }
-        }
+        b.cardImageGen.setOnClickListener  { go(ImageGenActivity::class.java) }
+        b.cardBgChange.setOnClickListener  { go(BgChangeActivity::class.java) }
+        b.cardFilter.setOnClickListener    { go(FilterActivity::class.java) }
+        b.cardSearch.setOnClickListener    { go(SearchActivity::class.java) }
     }
+
+    private fun go(cls: Class<*>) = startActivity(Intent(this, cls))
 }

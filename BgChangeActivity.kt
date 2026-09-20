@@ -1,33 +1,27 @@
-package com.ahmed.agentapp
+package com.ahmed.aiagent
 
-import android.content.ContentValues
 import android.graphics.*
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import com.ahmed.agentapp.databinding.ActivityBgChangeBinding
+import com.ahmed.aiagent.databinding.ActivityBgChangeBinding
 
 class BgChangeActivity : AppCompatActivity() {
 
     private lateinit var b: ActivityBgChangeBinding
-    private var originalBitmap: Bitmap? = null
-    private var fgBitmap: Bitmap? = null   // foreground (background removed)
+    private var fgBitmap: Bitmap? = null
     private var resultBitmap: Bitmap? = null
 
     private val pickImage = registerForActivityResult(
         ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
-            val stream = contentResolver.openInputStream(it)
-            originalBitmap = BitmapFactory.decodeStream(stream)
-            b.imageOriginal.setImageBitmap(originalBitmap)
-            b.imageOriginal.visibility = View.VISIBLE
-            b.btnRemoveBg.isEnabled = true
-            b.txtStatus.text = "Image load ho gayi — background hatao"
+            val bmp = contentResolver.openInputStream(it)
+                ?.let { s -> BitmapFactory.decodeStream(s) } ?: return@let
+            processImage(bmp)
         }
     }
 
@@ -35,9 +29,9 @@ class BgChangeActivity : AppCompatActivity() {
         ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
-            val stream = contentResolver.openInputStream(it)
-            val bgBitmap = BitmapFactory.decodeStream(stream) ?: return@let
-            applyImageBackground(bgBitmap)
+            val bmp = contentResolver.openInputStream(it)
+                ?.let { s -> BitmapFactory.decodeStream(s) } ?: return@let
+            applyBgImage(bmp)
         }
     }
 
@@ -48,112 +42,88 @@ class BgChangeActivity : AppCompatActivity() {
 
         b.btnPickImage.setOnClickListener { pickImage.launch("image/*") }
 
-        b.btnRemoveBg.setOnClickListener {
-            val bmp = originalBitmap ?: return@setOnClickListener
-            b.progressBar.visibility = View.VISIBLE
-            b.txtStatus.text = "Background hata raha hai..."
+        b.btnWhite.setOnClickListener  { applyColor(Color.WHITE) }
+        b.btnBlack.setOnClickListener  { applyColor(Color.BLACK) }
+        b.btnBlue.setOnClickListener   { applyColor(Color.parseColor("#1565C0")) }
+        b.btnGreen.setOnClickListener  { applyColor(Color.parseColor("#2E7D32")) }
+        b.btnRed.setOnClickListener    { applyColor(Color.parseColor("#B71C1C")) }
+        b.btnYellow.setOnClickListener { applyColor(Color.parseColor("#F57F17")) }
+        b.btnGallery.setOnClickListener { pickBgImage.launch("image/*") }
 
-            HuggingFaceApi.removeBackground(bmp,
-                onResult = { result ->
-                    runOnUiThread {
-                        b.progressBar.visibility = View.GONE
-                        if (result != null) {
-                            fgBitmap = result
-                            b.imageResult.setImageBitmap(result)
-                            b.imageResult.visibility = View.VISIBLE
-                            b.bgOptions.visibility = View.VISIBLE
-                            b.txtStatus.text = "✅ Background hat gaya! Ab naya background choose karo."
-                        } else {
-                            b.txtStatus.text = "❌ Nahi hua — token check karo"
-                        }
-                    }
-                },
-                onError = { err ->
-                    runOnUiThread {
-                        b.progressBar.visibility = View.GONE
-                        b.txtStatus.text = "❌ $err"
-                    }
-                }
-            )
-        }
-
-        // Solid color backgrounds
-        b.btnBgWhite.setOnClickListener  { applySolidBackground(Color.WHITE) }
-        b.btnBgBlack.setOnClickListener  { applySolidBackground(Color.BLACK) }
-        b.btnBgBlue.setOnClickListener   { applySolidBackground(Color.parseColor("#1565C0")) }
-        b.btnBgGreen.setOnClickListener  { applySolidBackground(Color.parseColor("#2E7D32")) }
-        b.btnBgRed.setOnClickListener    { applySolidBackground(Color.parseColor("#C62828")) }
-        b.btnBgYellow.setOnClickListener { applySolidBackground(Color.parseColor("#F9A825")) }
-
-        // Custom image background from gallery
-        b.btnBgCustom.setOnClickListener { pickBgImage.launch("image/*") }
-
-        // AI generated background
-        b.btnBgAi.setOnClickListener {
+        b.btnAiBg.setOnClickListener {
             val prompt = b.editBgPrompt.text.toString().trim()
             if (prompt.isEmpty()) {
                 Toast.makeText(this, "Background ka description likho", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            b.txtStatus.text = "AI background bana raha hai..."
+            b.txtStatus.text = "AI background bana raha hai…"
             b.progressBar.visibility = View.VISIBLE
-            HuggingFaceApi.generateImage(prompt,
-                onResult = { bgBitmap ->
-                    runOnUiThread {
-                        b.progressBar.visibility = View.GONE
-                        bgBitmap?.let { applyImageBackground(it) }
-                            ?: run { b.txtStatus.text = "❌ Background nahi bana" }
-                    }
-                },
-                onError = { err ->
-                    runOnUiThread {
-                        b.progressBar.visibility = View.GONE
-                        b.txtStatus.text = "❌ $err"
-                    }
-                }
+            PollinationsApi.generateImage(prompt,
+                onResult = { bmp -> runOnUiThread {
+                    b.progressBar.visibility = View.GONE
+                    bmp?.let { applyBgImage(it) } ?: run { b.txtStatus.text = "❌ Nahi bana" }
+                }},
+                onError = { err -> runOnUiThread {
+                    b.progressBar.visibility = View.GONE
+                    b.txtStatus.text = "❌ $err"
+                }}
             )
         }
 
-        b.btnSave.setOnClickListener { saveResult() }
+        b.btnSave.setOnClickListener {
+            val bmp = resultBitmap ?: return@setOnClickListener
+            val ok = ImageSaveHelper.save(this, bmp, "BgChanged")
+            Toast.makeText(this,
+                if (ok) "✅ Gallery mein save ho gayi!" else "❌ Save nahi hua",
+                Toast.LENGTH_SHORT).show()
+        }
     }
 
-    private fun applySolidBackground(color: Int) {
+    private fun processImage(bmp: Bitmap) {
+        // Simple background removal: makes near-white pixels transparent
+        val w = bmp.width; val h = bmp.height
+        val out = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+        val pixels = IntArray(w * h)
+        bmp.getPixels(pixels, 0, w, 0, 0, w, h)
+        for (i in pixels.indices) {
+            val r = Color.red(pixels[i])
+            val g = Color.green(pixels[i])
+            val bl = Color.blue(pixels[i])
+            // Keep pixel if it's dark enough (not background)
+            pixels[i] = if (r > 230 && g > 230 && bl > 230) Color.TRANSPARENT else pixels[i]
+        }
+        out.setPixels(pixels, 0, w, 0, 0, w, h)
+        fgBitmap = out
+        b.imageResult.setImageBitmap(out)
+        b.imageResult.visibility = View.VISIBLE
+        b.bgOptions.visibility   = View.VISIBLE
+        b.txtStatus.text = "✅ Background hat gaya! Ab naya background choose karo."
+    }
+
+    private fun applyColor(color: Int) {
         val fg = fgBitmap ?: return
-        val w = fg.width; val h = fg.height
-        val canvas = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
-        val c = Canvas(canvas)
-        c.drawColor(color)
-        c.drawBitmap(fg, 0f, 0f, null)
+        val canvas = Bitmap.createBitmap(fg.width, fg.height, Bitmap.Config.ARGB_8888)
+        Canvas(canvas).apply {
+            drawColor(color)
+            drawBitmap(fg, 0f, 0f, null)
+        }
         resultBitmap = canvas
         b.imageResult.setImageBitmap(canvas)
         b.btnSave.visibility = View.VISIBLE
-        b.txtStatus.text = "✅ Background badal gaya! Save karo."
+        b.txtStatus.text = "✅ Background badal gaya — save karo!"
     }
 
-    private fun applyImageBackground(bgBitmap: Bitmap) {
+    private fun applyBgImage(bgBmp: Bitmap) {
         val fg = fgBitmap ?: return
-        val w = fg.width; val h = fg.height
-        val scaledBg = Bitmap.createScaledBitmap(bgBitmap, w, h, true)
-        val canvas = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
-        val c = Canvas(canvas)
-        c.drawBitmap(scaledBg, 0f, 0f, null)
-        c.drawBitmap(fg, 0f, 0f, null)
+        val scaled = Bitmap.createScaledBitmap(bgBmp, fg.width, fg.height, true)
+        val canvas = Bitmap.createBitmap(fg.width, fg.height, Bitmap.Config.ARGB_8888)
+        Canvas(canvas).apply {
+            drawBitmap(scaled, 0f, 0f, null)
+            drawBitmap(fg, 0f, 0f, null)
+        }
         resultBitmap = canvas
         b.imageResult.setImageBitmap(canvas)
         b.btnSave.visibility = View.VISIBLE
-        b.txtStatus.text = "✅ Background badal gaya! Save karo."
-    }
-
-    private fun saveResult() {
-        val bmp = resultBitmap ?: return
-        val values = ContentValues().apply {
-            put(MediaStore.Images.Media.DISPLAY_NAME, "BgChanged_${System.currentTimeMillis()}.png")
-            put(MediaStore.Images.Media.MIME_TYPE, "image/png")
-            put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/AgentApp")
-        }
-        contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)?.let { uri ->
-            contentResolver.openOutputStream(uri)?.use { bmp.compress(Bitmap.CompressFormat.PNG, 100, it) }
-            Toast.makeText(this, "✅ Gallery mein save ho gayi!", Toast.LENGTH_SHORT).show()
-        }
+        b.txtStatus.text = "✅ Background badal gaya — save karo!"
     }
 }

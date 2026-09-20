@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:background="#0D0D0D" android:padding="16dp">
+  <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+      android:text="Photo Filters" android:textColor="#FFF" android:textSize="20sp" android:textStyle="bold" android:paddingBottom="12dp"/>
+  <Button android:id="@+id/btnPick" android:layout_width="match_parent" android:layout_height="50dp"
+      android:text="Photo Select Karo" android:backgroundTint="#1565C0" android:textColor="#FFF"/>
+  <ImageView android:id="@+id/imageView" android:layout_width="match_parent" android:layout_height="0dp"
+      android:layout_weight="1" android:scaleType="fitCenter" android:layout_marginTop="12dp" android:background="#1A1A1A"/>
+  <LinearLayout android:id="@+id/filterRow" android:layout_width="match_parent" android:layout_height="wrap_content"
+      android:orientation="vertical" android:visibility="gone" android:layout_marginTop="8dp">
+    <HorizontalScrollView android:layout_width="match_parent" android:layout_height="wrap_content">
+      <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal">
+        <Button android:id="@+id/btnOriginal" android:layout_width="wrap_content" android:layout_height="40dp" android:text="Original" android:textSize="11sp" android:backgroundTint="#37474F"/>
+        <Button android:id="@+id/btnBW"       android:layout_width="wrap_content" android:layout_height="40dp" android:text="B and W"  android:textSize="11sp" android:backgroundTint="#37474F" android:layout_marginStart="4dp"/>
+        <Button android:id="@+id/btnSepia"    android:layout_width="wrap_content" android:layout_height="40dp" android:text="Sepia"    android:textSize="11sp" android:backgroundTint="#5D4037" android:layout_marginStart="4dp"/>
+        <Button android:id="@+id/btnWarm"     android:layout_width="wrap_content" android:layout_height="40dp" android:text="Warm"     android:textSize="11sp" android:backgroundTint="#E65100" android:layout_marginStart="4dp"/>
+        <Button android:id="@+id/btnCool"     android:layout_width="wrap_content" android:layout_height="40dp" android:text="Cool"     android:textSize="11sp" android:backgroundTint="#0277BD" android:layout_marginStart="4dp"/>
+        <Button android:id="@+id/btnVivid"    android:layout_width="wrap_content" android:layout_height="40dp" android:text="Vivid"    android:textSize="11sp" android:backgroundTint="#6A1B9A" android:layout_marginStart="4dp"/>
+        <Button android:id="@+id/btnNeg"      android:layout_width="wrap_content" android:layout_height="40dp" android:text="Negative" android:textSize="11sp" android:backgroundTint="#212121" android:layout_marginStart="4dp"/>
+      </LinearLayout>
+    </HorizontalScrollView>
+    <SeekBar android:id="@+id/seekBright" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:max="254" android:progress="127" android:layout_marginTop="8dp"/>
+  </LinearLayout>
+  <Button android:id="@+id/btnSave" android:layout_width="match_parent" android:layout_height="50dp"
+      android:layout_marginTop="8dp" android:text="Gallery mein Save Karo"
+      android:backgroundTint="#2E7D32" android:textColor="#FFF" android:visibility="gone"/>
+</LinearLayout>

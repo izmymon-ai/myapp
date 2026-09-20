@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:background="#0D0D0D" android:padding="16dp">
+  <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+      android:text="AI Image Generator" android:textColor="#FFF" android:textSize="20sp" android:textStyle="bold" android:paddingBottom="16dp"/>
+  <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
+    <EditText android:id="@+id/editPrompt" android:layout_width="0dp" android:layout_height="wrap_content"
+        android:layout_weight="1" android:textColor="#FFF" android:hint="Kya image chahiye..." android:textColorHint="#666"
+        android:backgroundTint="#333333" android:padding="10dp" android:inputType="text"/>
+    <Button android:id="@+id/btnMic" android:layout_width="48dp" android:layout_height="48dp"
+        android:layout_marginStart="8dp" android:text="Mic" android:backgroundTint="#1565C0" android:textColor="#FFF" android:textSize="11sp"/>
+  </LinearLayout>
+  <Button android:id="@+id/btnGenerate" android:layout_width="match_parent" android:layout_height="50dp"
+      android:layout_marginTop="12dp" android:text="Image Banao" android:backgroundTint="#1565C0" android:textColor="#FFF" android:textSize="16sp"/>
+  <TextView android:id="@+id/txtStatus" android:layout_width="wrap_content" android:layout_height="wrap_content"
+      android:layout_marginTop="8dp" android:textColor="#AAAAAA" android:textSize="13sp" android:text="Prompt likho phir button dabao"/>
+  <ProgressBar android:id="@+id/progressBar" android:layout_width="wrap_content" android:layout_height="wrap_content"
+      android:layout_gravity="center" android:visibility="gone" android:layout_marginTop="16dp"/>
+  <ImageView android:id="@+id/imageResult" android:layout_width="match_parent" android:layout_height="0dp"
+      android:layout_weight="1" android:layout_marginTop="12dp" android:scaleType="fitCenter" android:visibility="gone"/>
+  <Button android:id="@+id/btnSave" android:layout_width="match_parent" android:layout_height="50dp"
+      android:layout_marginTop="8dp" android:text="Gallery mein Save Karo"
+      android:backgroundTint="#2E7D32" android:textColor="#FFF" android:visibility="gone"/>
+</LinearLayout>
